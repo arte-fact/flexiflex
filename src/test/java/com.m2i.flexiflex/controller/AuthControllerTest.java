@@ -1,7 +1,7 @@
 package com.m2i.flexiflex.controller;
 
-import com.m2i.flexiflex.properties.UserProperties;
 import com.m2i.flexiflex.persistence.UserPersistence;
+import com.m2i.flexiflex.properties.UserProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
