@@ -1,9 +1,9 @@
 
 package com.m2i.flexiflex.controller;
 
-import com.m2i.flexiflex.entity.UserEntity;
-import com.m2i.flexiflex.persistence.UserPersistence;
+import com.m2i.flexiflex.model.User;
 import com.m2i.flexiflex.service.HibernateSession;
+import com.m2i.flexiflex.service.UserServiceImp;
 import org.hibernate.Session;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +26,10 @@ public class EmailValidationControllerTest {
     private String testUserMail = "user@mail.com";
     private String testUserPassword = "secret";
 
+
+    @Autowired
+    private UserServiceImp userServiceImp;
+
     @Autowired
     private MockMvc mvc;
     private Session hbsession = HibernateSession.getSession();
@@ -43,34 +47,37 @@ public class EmailValidationControllerTest {
 
     @Test
     public void emailValidationBadUuid() throws Exception {
-        UserPersistence.create(testUserMail, testUserPassword);
+        userServiceImp.deleteUserByMail(testUserMail);
+        userServiceImp.create(testUserMail, testUserPassword);
 
         String url = "/email_validation?key1=" + "nimportequoi" + "&key2=" + "nimportequoi";
         this.mvc.perform(get(url))
                 .andExpect(status().isBadRequest()).andDo(print());
 
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
     }
 
     @Test
     public void emailValidationBadValidationToken() throws Exception {
-        UserEntity userEntity = UserPersistence.create(testUserMail, testUserPassword);
+        User user = userServiceImp.create(testUserMail, testUserPassword);
 
-        String url = "/email_validation?key1=" + userEntity.getUuid() + "&key2=" + "nimportequoi";
+        String url = "/email_validation?key1=" + user.getUuid() + "&key2=" + "nimportequoi";
         this.mvc.perform(get(url))
                 .andExpect(status().isBadRequest()).andDo(print());
 
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
+
     }
 
     @Test
     public void emailValidationGoodParameters() throws Exception {
-        UserEntity userEntity = UserPersistence.create(testUserMail, testUserPassword);
+        User user = userServiceImp.create(testUserMail, testUserPassword);
 
-        String url = "/email_validation?uuid=" + userEntity.getUuid() + "&token=" + userEntity.getValidationToken();
+        String url = "/email_validation?uuid=" + user.getUuid() + "&token=" + user.getValidationToken();
         this.mvc.perform(get(url))
                 .andExpect(status().isOk()).andDo(print());
 
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
+
     }
 }

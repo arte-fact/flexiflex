@@ -4,15 +4,20 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:mysql://localhost:3306/flexiflex?serverTimezone=UTC</property>
+        <property name="connection.url">jdbc:mysql://localhost:3307/flexiflex?serverTimezone=UTC</property>
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.connection.username">flexiflexadmin</property>
-        <property name="hibernate.connection.password">m2ijavamsa</property>
+        <property name="hibernate.connection.password">test</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="show_sql">true</property>
 
         <!--DB schema will be updated if needed -->
          <property name="hbm2ddl.auto">update</property>
-        <mapping class="com.m2i.flexiflex.entity.UserEntity"/>
+
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.max_size">20</property>
+        <property name="hibernate.c3p0.max_statements">150</property>
+
+        <mapping class="com.m2i.flexiflex.model.User"/>
     </session-factory>
 </hibernate-configuration>

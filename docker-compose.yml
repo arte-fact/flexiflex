@@ -9,5 +9,5 @@ services:
       MYSQL_PASSWORD: "test"
     image: mysql:5.7.21
     ports:
-      - 3306:3306
+      - 3307:3306
     restart: always

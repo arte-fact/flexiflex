@@ -11,7 +11,7 @@ public class HibernateSession {
     static {
         try {
             Configuration configuration = new Configuration();
-            configuration.configure();
+            configuration.configure().buildSessionFactory();
 
             ourSessionFactory = configuration.buildSessionFactory();
         } catch (Throwable ex) {

@@ -1,6 +1,7 @@
-package com.m2i.flexiflex.entity;
+package com.m2i.flexiflex.model;
 
 import com.m2i.flexiflex.properties.UserProperties;
+import jdk.nashorn.internal.objects.annotations.Property;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class UserEntity implements Serializable {
+public class User {
 
     private String email;
     private String password;
@@ -19,9 +20,9 @@ public class UserEntity implements Serializable {
     private String uuid;
     private int id;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, nullable = false, insertable = false)
     public int getId() {
         return this.id;
     }
@@ -30,8 +31,7 @@ public class UserEntity implements Serializable {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = UserProperties.EMAIL, nullable = false, unique = true)
+    @Column(unique = true, nullable = false, length = 255, updatable = false)
     public String getEmail() {
         return this.email;
     }
@@ -40,8 +40,7 @@ public class UserEntity implements Serializable {
         this.email = email;
     }
 
-    @Basic
-    @Column(name = UserProperties.PASSWORD, nullable = false)
+    @Column(name = UserProperties.PASSWORD, nullable = false, updatable = false)
     public String getPassword() {
         return password;
     }
@@ -50,7 +49,6 @@ public class UserEntity implements Serializable {
         this.password = password;
     }
 
-    @Basic
     @Column(name = UserProperties.INSCRIPTION_DATE)
     public Date getInscriptionDate() {
         return inscriptionDate;
@@ -60,7 +58,6 @@ public class UserEntity implements Serializable {
         this.inscriptionDate = inscriptionDate;
     }
 
-    @Basic
     @Column(name = UserProperties.VALIDATION_TOKEN)
     public String getValidationToken() {
         return validationToken;
@@ -70,7 +67,6 @@ public class UserEntity implements Serializable {
         this.validationToken = validationToken;
     }
 
-    @Basic
     @Column(name = UserProperties.EMAIL_VALIDE)
     public Boolean getEmailValidation() {
         return emailValidation;
@@ -80,7 +76,6 @@ public class UserEntity implements Serializable {
         this.emailValidation = isValidated;
     }
 
-    @Basic
     @Column(name = UserProperties.UUID)
     public String getUuid() {
         return uuid;
@@ -94,7 +89,7 @@ public class UserEntity implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserEntity that = (UserEntity) o;
+        User that = (User) o;
         return id == that.id &&
                 Objects.equals(email, that.email) &&
                 Objects.equals(password, that.password) &&
@@ -106,7 +101,7 @@ public class UserEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "UserEntity{" +
+        return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +

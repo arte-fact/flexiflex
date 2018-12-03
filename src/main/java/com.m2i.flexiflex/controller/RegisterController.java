@@ -1,11 +1,12 @@
 package com.m2i.flexiflex.controller;
 
-import com.m2i.flexiflex.entity.UserEntity;
-import com.m2i.flexiflex.persistence.UserPersistence;
+import com.m2i.flexiflex.model.User;
 import com.m2i.flexiflex.service.HibernateSession;
 import com.m2i.flexiflex.service.SendMail;
+import com.m2i.flexiflex.service.UserServiceImp;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +14,23 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class RegisterController {
 
+    private final UserServiceImp userServiceImp;
+
+    @Autowired
+    public RegisterController(UserServiceImp userServiceImp) {
+        this.userServiceImp = userServiceImp;
+    }
+
     @CrossOrigin
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity register(@RequestParam(name = "email", value = "email") String email, @RequestParam(name = "password") String password) {
         final Session session = HibernateSession.getSession();
 
-        UserEntity user = new UserEntity();
         try {
-            if (!UserPersistence.exist(email)){
-                UserPersistence.create(email, password);
+            if (userServiceImp.getByMail(email).getClass() == User.class){
+                User user = userServiceImp.getByMail(email);
+                user.setEmailValidation(true);
+                user = userServiceImp.update(user);
 
                 //ENVOI MAIL VALIDATION
                 SendMail send_mail    =   new SendMail();

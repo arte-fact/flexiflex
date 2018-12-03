@@ -1,7 +1,7 @@
 package com.m2i.flexiflex.controller;
 
-import com.m2i.flexiflex.persistence.UserPersistence;
 import com.m2i.flexiflex.properties.UserProperties;
+import com.m2i.flexiflex.service.UserServiceImp;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,9 @@ public class AuthControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private UserServiceImp userServiceImp;
+
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(
             MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -35,7 +38,7 @@ public class AuthControllerTest {
 
     @Test
     public void nonUserCannotLogin() throws Exception {
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
 
         mvc.perform(post("/login")
                 .param(UserProperties.EMAIL, "toto@caca.toto")
@@ -46,7 +49,9 @@ public class AuthControllerTest {
 
     @Test
     public void userCannotLoginWithBadPassword() throws Exception {
-        UserPersistence.create(testUserMail, testUserPassword);
+        userServiceImp.deleteUserByMail(testUserMail);
+        userServiceImp.create(testUserMail, testUserPassword);
+
 
         mvc.perform(post("/login")
                 .param(UserProperties.EMAIL, testUserMail)
@@ -54,12 +59,12 @@ public class AuthControllerTest {
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
 
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
     }
 
     @Test
     public void userCanLoginWithPassword() throws Exception {
-        UserPersistence.create(testUserMail, testUserPassword);
+        userServiceImp.create(testUserMail, testUserPassword);
 
         mvc.perform(post("/login")
                 .param(UserProperties.EMAIL, testUserMail)
@@ -67,6 +72,6 @@ public class AuthControllerTest {
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
 
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
     }
 }

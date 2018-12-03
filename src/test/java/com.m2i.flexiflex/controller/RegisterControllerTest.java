@@ -1,7 +1,7 @@
 package com.m2i.flexiflex.controller;
 
-import com.m2i.flexiflex.persistence.UserPersistence;
 import com.m2i.flexiflex.properties.UserProperties;
+import com.m2i.flexiflex.service.UserServiceImp;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,8 @@ public class RegisterControllerTest {
     private String testUserPassword = "secret";
 
     @Autowired
+    private UserServiceImp userServiceImp;
+    @Autowired
     private MockMvc mvc;
 
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(
@@ -32,7 +34,7 @@ public class RegisterControllerTest {
 
     @Test
     public void nonUserCanRegister() throws Exception{
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
 
         mvc.perform(post("/register")
                 .param(UserProperties.EMAIL, testUserMail)
@@ -40,12 +42,13 @@ public class RegisterControllerTest {
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated());
 
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
+
     }
 
     @Test
     public void registeredUserCannotRegister() throws Exception {
-        UserPersistence.create(testUserMail, testUserPassword);
+        userServiceImp.create(testUserMail, testUserPassword);
 
         mvc.perform(post("/register")
                 .param(UserProperties.EMAIL, testUserMail)
@@ -53,6 +56,7 @@ public class RegisterControllerTest {
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
 
-        UserPersistence.delete(testUserMail);
+        userServiceImp.deleteUserByMail(testUserMail);
+
     }
 }
