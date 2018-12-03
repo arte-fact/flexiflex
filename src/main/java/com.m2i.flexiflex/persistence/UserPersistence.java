@@ -1,7 +1,7 @@
-package com.m2i.flexiflex.controller.factories;
+package com.m2i.flexiflex.persistence;
 
 import com.m2i.flexiflex.entity.UserEntity;
-import com.m2i.flexiflex.entity.properties.UserProperties;
+import com.m2i.flexiflex.properties.UserProperties;
 import com.m2i.flexiflex.service.HibernateSession;
 import com.m2i.flexiflex.service.TokenGenerator;
 import org.hibernate.Session;
@@ -15,32 +15,16 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public class UserFactory {
-    private static String testUserMail = "user@mail.com";
 
-    public static String getTestUserMail() {
-        return testUserMail;
-    }
 
-    public static void setTestUserMail(String testUserMail) {
-        UserFactory.testUserMail = testUserMail;
-    }
+public class UserPersistence {
 
-    public static String getTestUserPassword() {
-        return testUserPassword;
-    }
+    private static final Session hbsession = HibernateSession.getSession();
 
-    public static void setTestUserPassword(String testUserPassword) {
-        UserFactory.testUserPassword = testUserPassword;
-    }
-
-    private static String testUserPassword = "secret";
-    private static Session hbsession = HibernateSession.getSession();
-
-    public static void deleteTestUser() {
+    public static void delete(String email) {
         try {
             DetachedCriteria detachedCriteria = DetachedCriteria.forClass(UserEntity.class)
-                    .add(Property.forName(UserProperties.EMAIL).eq(testUserMail));
+                    .add(Property.forName(UserProperties.EMAIL).eq(email));
             List userEntity = detachedCriteria.getExecutableCriteria(hbsession).list();
             if (!userEntity.isEmpty()) {
                 Transaction tx = hbsession.beginTransaction();
@@ -52,21 +36,23 @@ public class UserFactory {
         }
     }
 
-    public static UserEntity makeTestUser() {
+    public static UserEntity create(String email, String password) {
+
         UserEntity user = new UserEntity();
         try {
             DetachedCriteria detachedCriteria = DetachedCriteria.forClass(UserEntity.class)
-                    .add(Property.forName(UserProperties.EMAIL).eq(testUserMail));
+                    .add(Property.forName(UserProperties.EMAIL).eq(email));
             List userEntity = detachedCriteria.getExecutableCriteria(hbsession).list();
+
             if (userEntity.isEmpty()) {
                 Transaction tx = hbsession.beginTransaction();
-                user.setEmail(testUserMail);
-                user.setPassword(testUserPassword);
+                user.setEmail(email);
+                user.setPassword(password);
                 user.setInscriptionDate(Date.valueOf(LocalDate.now()));
                 user.setValidationToken(TokenGenerator.GetTokenSHA256());
-                user.setEmailValidation(0);
+                user.setEmailValidation(false);
                 user.setUuid(UUID.randomUUID().toString());
-                hbsession.saveOrUpdate(user);
+                hbsession.save(user);
                 tx.commit();
             }
         } catch (TransactionRequiredException e) {
@@ -75,4 +61,19 @@ public class UserFactory {
 
         return user;
     }
+
+    public static boolean exist(String email) {
+        return !DetachedCriteria.forClass(UserEntity.class)
+                .add(Property.forName(UserProperties.EMAIL).eq(email))
+                .getExecutableCriteria(hbsession)
+                .list().isEmpty();
+    }
+
+    public static UserEntity getByEmail(String email) {
+        return (UserEntity) DetachedCriteria.forClass(UserEntity.class)
+                .add(Property.forName(UserProperties.EMAIL).eq(email))
+                .getExecutableCriteria(hbsession)
+                .uniqueResult();
+    }
+
 }

@@ -2,13 +2,9 @@
 package com.m2i.flexiflex.controller;
 
 import com.m2i.flexiflex.entity.UserEntity;
-import com.m2i.flexiflex.entity.properties.UserProperties;
+import com.m2i.flexiflex.persistence.UserPersistence;
 import com.m2i.flexiflex.service.HibernateSession;
-import com.m2i.flexiflex.service.TokenGenerator;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Property;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.persistence.TransactionRequiredException;
 import java.nio.charset.Charset;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
 
-import static com.m2i.flexiflex.controller.factories.UserFactory.deleteTestUser;
-import static com.m2i.flexiflex.controller.factories.UserFactory.makeTestUser;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,11 +23,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(EmailValidationController.class)
 public class EmailValidationControllerTest {
 
+    private String testUserMail = "user@mail.com";
+    private String testUserPassword = "secret";
+
     @Autowired
     private MockMvc mvc;
     private Session hbsession = HibernateSession.getSession();
-    private String testUserMail = "user@mail.com";
-    private String testUserPassword = "secret";
 
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(
             MediaType.APPLICATION_JSON.getType(),
@@ -53,28 +43,34 @@ public class EmailValidationControllerTest {
 
     @Test
     public void emailValidationBadUuid() throws Exception {
-        deleteTestUser();
-        UserEntity userEntity = makeTestUser();
+        UserPersistence.create(testUserMail, testUserPassword);
+
         String url = "/email_validation?key1=" + "nimportequoi" + "&key2=" + "nimportequoi";
-        this.mvc.perform(get(url)).andExpect(status().isBadRequest()).andDo(print());
-        deleteTestUser();
+        this.mvc.perform(get(url))
+                .andExpect(status().isBadRequest()).andDo(print());
+
+        UserPersistence.delete(testUserMail);
     }
 
     @Test
     public void emailValidationBadValidationToken() throws Exception {
-        deleteTestUser();
-        UserEntity userEntity = makeTestUser();
+        UserEntity userEntity = UserPersistence.create(testUserMail, testUserPassword);
+
         String url = "/email_validation?key1=" + userEntity.getUuid() + "&key2=" + "nimportequoi";
-        this.mvc.perform(get(url)).andExpect(status().isBadRequest()).andDo(print());
-        deleteTestUser();
+        this.mvc.perform(get(url))
+                .andExpect(status().isBadRequest()).andDo(print());
+
+        UserPersistence.delete(testUserMail);
     }
 
     @Test
     public void emailValidationGoodParameters() throws Exception {
-          deleteTestUser();
-        UserEntity userEntity = makeTestUser();
-        String url = "/email_validation?key1=" + userEntity.getUuid() + "&key2=" + userEntity.getValidationToken();
-        this.mvc.perform(get(url)).andExpect(status().isAccepted()).andDo(print());
-        deleteTestUser();
+        UserEntity userEntity = UserPersistence.create(testUserMail, testUserPassword);
+
+        String url = "/email_validation?uuid=" + userEntity.getUuid() + "&token=" + userEntity.getValidationToken();
+        this.mvc.perform(get(url))
+                .andExpect(status().isOk()).andDo(print());
+
+        UserPersistence.delete(testUserMail);
     }
 }

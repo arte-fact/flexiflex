@@ -1,7 +1,7 @@
 package com.m2i.flexiflex.controller;
 
-import com.m2i.flexiflex.controller.factories.UserFactory;
-import com.m2i.flexiflex.entity.properties.UserProperties;
+import com.m2i.flexiflex.persistence.UserPersistence;
+import com.m2i.flexiflex.properties.UserProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +12,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.Charset;
 
-import static com.m2i.flexiflex.controller.factories.UserFactory.deleteTestUser;
-import static com.m2i.flexiflex.controller.factories.UserFactory.makeTestUser;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(RegisterController.class)
 public class RegisterControllerTest {
+
+    private String testUserMail = "user@mail.com";
+    private String testUserPassword = "secret";
 
     @Autowired
     private MockMvc mvc;
@@ -31,26 +32,27 @@ public class RegisterControllerTest {
 
     @Test
     public void nonUserCanRegister() throws Exception{
-        deleteTestUser();
+        UserPersistence.delete(testUserMail);
+
         mvc.perform(post("/register")
-                .param(UserProperties.EMAIL, UserFactory.getTestUserMail())
-                .param(UserProperties.PASSWORD, UserFactory.getTestUserPassword())
+                .param(UserProperties.EMAIL, testUserMail)
+                .param(UserProperties.PASSWORD, testUserPassword)
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated());
 
-       // deleteTestUser();
+        UserPersistence.delete(testUserMail);
     }
 
-//    @Test
-//    public void registeredUserCannotRegister() throws Exception {
-//        makeTestUser();
-//
-//        mvc.perform(post("/register")
-//                .param(UserProperties.EMAIL, UserFactory.getTestUserMail())
-//                .param(UserProperties.PASSWORD, UserFactory.getTestUserPassword())
-//                .contentType(APPLICATION_JSON_UTF8))
-//                .andExpect(status().isBadRequest());
-//
-//        deleteTestUser();
-//    }
+    @Test
+    public void registeredUserCannotRegister() throws Exception {
+        UserPersistence.create(testUserMail, testUserPassword);
+
+        mvc.perform(post("/register")
+                .param(UserProperties.EMAIL, testUserMail)
+                .param(UserProperties.PASSWORD, testUserPassword)
+                .contentType(APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+
+        UserPersistence.delete(testUserMail);
+    }
 }

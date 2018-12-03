@@ -1,6 +1,7 @@
-package com.m2i.flexiflex.entity.properties;
+package com.m2i.flexiflex.properties;
 
 public class UserProperties {
+    public static final String ID = "id";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
     public static final String INSCRIPTION_DATE = "inscription_date";

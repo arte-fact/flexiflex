@@ -1,31 +1,29 @@
 package com.m2i.flexiflex.entity;
 
-import com.m2i.flexiflex.entity.properties.UserProperties;
+import com.m2i.flexiflex.properties.UserProperties;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Date;
-import java.sql.SQLOutput;
 import java.util.Objects;
-import com.m2i.flexiflex.entity.properties.UserProperties;
 
-@Entity(name = "user")
-public class UserEntity {
+@Entity
+@Table(name = "user")
+public class UserEntity implements Serializable {
 
-    private int id;
     private String email;
     private String password;
     private Date inscriptionDate;
     private String validationToken;
-    private Integer emailValidation;
+    private Boolean emailValidation;
     private String uuid;
+    private int id;
+
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {
@@ -33,9 +31,9 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = UserProperties.EMAIL)
+    @Column(name = UserProperties.EMAIL, nullable = false, unique = true)
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public void setEmail(String email) {
@@ -43,7 +41,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = UserProperties.PASSWORD)
+    @Column(name = UserProperties.PASSWORD, nullable = false)
     public String getPassword() {
         return password;
     }
@@ -74,11 +72,11 @@ public class UserEntity {
 
     @Basic
     @Column(name = UserProperties.EMAIL_VALIDE)
-    public Integer getEmailValidation() {
+    public Boolean getEmailValidation() {
         return emailValidation;
     }
 
-    public void setEmailValidation(Integer isValidated) {
+    public void setEmailValidation(Boolean isValidated) {
         this.emailValidation = isValidated;
     }
 
@@ -104,6 +102,19 @@ public class UserEntity {
                 Objects.equals(validationToken, that.validationToken) &&
                 Objects.equals(emailValidation, that.emailValidation) &&
                 Objects.equals(uuid, that.uuid);
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", inscriptionDate=" + inscriptionDate +
+                ", validationToken='" + validationToken + '\'' +
+                ", emailValidation=" + emailValidation +
+                ", uuid='" + uuid + '\'' +
+                '}';
     }
 
     @Override
