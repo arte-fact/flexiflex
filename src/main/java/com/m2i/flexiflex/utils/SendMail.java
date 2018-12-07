@@ -1,33 +1,21 @@
 package com.m2i.flexiflex.utils;
 
-import java.util.Properties;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-// -----------------------------------------------------------------------------------
-// -------------------- Fonction qui envoie l'email. A instancier --------------------
-// -----------------------------------------------------------------------------------
-//
-//    public static void main(String[] args) {
-//
-//        String userEmail = "florent.chazot@gmail.com";
-//
-//
-//        SendMail send_mail    =   new SendMail();
-//        send_mail.sendMail("flexiflex.emailvalidation@gmail.com", userEmail, "Test Mail", "Hi this is Test mail from Java Srilankan Support");
-//    }
-
+import java.util.Properties;
 
 public class SendMail {
+    private static SendMail ourInstance = new SendMail();
 
-    public static void sendMail(String m_from,String m_to,String m_subject,String m_body){
+    public static SendMail getInstance() {
+        return ourInstance;
+    }
+
+    private SendMail() {
+    }
+
+    public static void sendMail(String m_from, String m_to, String m_subject, String m_body){
 
         try {
             final String username = "flexiflex.emailvalidation@gmail.com"; // Mettre l'email de Flexiflex
@@ -52,7 +40,7 @@ public class SendMail {
             InternetAddress m_toAddress = new InternetAddress(m_to);
 
             m_simpleMessage.setFrom(m_fromAddress);
-            m_simpleMessage.setRecipient(RecipientType.TO, m_toAddress);
+            m_simpleMessage.setRecipient(Message.RecipientType.TO, m_toAddress);
             m_simpleMessage.setSubject(m_subject);
             m_simpleMessage.setContent(m_body,"text/html; charset=\"UTF-8\"");
 
@@ -63,6 +51,3 @@ public class SendMail {
         }
     }
 }
-
-
-//http://localhost:3306/email_validation?key1:uuid&key2=validationtoken

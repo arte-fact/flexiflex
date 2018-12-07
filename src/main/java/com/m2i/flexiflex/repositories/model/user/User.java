@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
+@NamedQuery(name = "User.findByMail", query = "SELECT u FROM User u WHERE u.email = :email")
+@NamedQuery(name = "User.findByUUID", query = "SELECT u FROM User u WHERE u.uuid = :uuid")
 @Table(name = "user")
 @Data
 public class User implements Serializable {

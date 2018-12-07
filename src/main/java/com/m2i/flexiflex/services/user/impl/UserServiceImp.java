@@ -31,6 +31,11 @@ public class UserServiceImp implements UserService {
         return userRepository.getByEmail(email);
     }
 
+    @Transactional(readOnly = true)
+    public User getByUUID(String uuid) {
+        return userRepository.getByUUID(uuid);
+    }
+
     @Transactional
     public void deleteUserByMail(String email){}
 
@@ -42,4 +47,7 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     public boolean existsByMail(String email){return userRepository.existsByEmail(email);}
+
+    @Transactional
+    public boolean existsByUUID(String uuid){return userRepository.existsByUUID(uuid);}
 }

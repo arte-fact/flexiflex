@@ -9,6 +9,7 @@ public interface UserService {
     List<User> list();
 
     User getByMail(String email);
+    User getByUUID(String uuid);
 
     void deleteUserByMail(String email);
 

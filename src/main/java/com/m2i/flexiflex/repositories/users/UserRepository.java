@@ -13,8 +13,10 @@ public interface UserRepository extends BaseRepository<User, Long> {
     void insert(User user);
 
     User getByEmail(String email);
+    User getByUUID(String uuid);
 
     User create(String email, String password);
 
     boolean existsByEmail(String email);
+    boolean existsByUUID(String uuid);
 }
