@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
-@NamedQuery(name = "User.findByMail", query = "SELECT u FROM User u WHERE u.email = :email")
-@NamedQuery(name = "User.findByUUID", query = "SELECT u FROM User u WHERE u.uuid = :uuid")
+@NamedQuery(name = UserProperties.NQ_FIND_BY_MAIL, query = "SELECT u FROM User u WHERE u.email = :email")
+@NamedQuery(name = UserProperties.NQ_FIND_BY_UUID, query = "SELECT u FROM User u WHERE u.uuid = :uuid")
 @Table(name = "user")
 @Data
 public class User implements Serializable {
@@ -21,17 +21,15 @@ public class User implements Serializable {
     private String validationToken;
     private Boolean emailValidation;
     private String uuid;
-    private int id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, insertable = false)
-    public int getId() {
-        return this.id;
+    @Column(name = UserProperties.UUID, unique = true, nullable = false, insertable = false)
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Column(unique = true, nullable = false, length = 255, updatable = false)
@@ -71,20 +69,11 @@ public class User implements Serializable {
     }
 
     @Column(name = UserProperties.EMAIL_VALIDE)
-    public Boolean getEmailValidation() {
+    public boolean getEmailValidation() {
         return emailValidation;
     }
 
-    public void setEmailValidation(Boolean isValidated) {
+    public void setEmailValidation(boolean isValidated) {
         this.emailValidation = isValidated;
-    }
-
-    @Column(name = UserProperties.UUID)
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 }

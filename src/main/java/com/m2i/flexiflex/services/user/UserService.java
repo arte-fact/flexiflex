@@ -14,5 +14,8 @@ public interface UserService {
     void deleteUserByMail(String email);
 
     User create(String mail, String password);
+    User update(User user);
+
+    User setEmailValidated(User user);
 }
 

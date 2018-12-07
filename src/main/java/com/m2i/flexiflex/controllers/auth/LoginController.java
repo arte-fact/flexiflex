@@ -32,8 +32,6 @@ public class LoginController {
         if (userServiceImp.existsByMail(email)) {
             User user = userServiceImp.getByMail(email);
             if (BcryptHolder.getInstance().getbCryptPasswordEncoder().matches(password, user.getPassword()) && user.getEmailValidation()) {
-                user.setValidationToken(TokenGenerator.GetTokenSHA256());
-                userServiceImp.update(user);
                 return new ResponseEntity<>(user, HttpStatus.OK);
             }
         }

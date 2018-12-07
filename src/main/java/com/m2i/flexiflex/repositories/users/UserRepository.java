@@ -16,6 +16,9 @@ public interface UserRepository extends BaseRepository<User, Long> {
     User getByUUID(String uuid);
 
     User create(String email, String password);
+    User update(User user);
+
+    User setEmailValidated(User user);
 
     boolean existsByEmail(String email);
     boolean existsByUUID(String uuid);

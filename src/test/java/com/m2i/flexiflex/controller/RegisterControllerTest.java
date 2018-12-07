@@ -7,9 +7,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(RegisterController.class)
-public class RegisterControllerTest {
+//@RunWith(SpringRunner.class)
+//@WebMvcTest(RegisterController.class)
+//public class RegisterControllerTest {
 //
 //    private String testUserMail = "user@mail.com";
 //    private String testUserPassword = "secret";
@@ -51,4 +51,4 @@ public class RegisterControllerTest {
 //        userServiceImp.deleteUserByMail(testUserMail);
 //
 //    }
-}
+//}

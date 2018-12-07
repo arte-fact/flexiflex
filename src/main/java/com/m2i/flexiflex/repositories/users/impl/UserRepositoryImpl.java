@@ -43,27 +43,28 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User, Long> implement
 
     @Override
     public User getByUUID(String uuid) {
-        TypedQuery<User> query = (TypedQuery<User>) getEntityManager()
-                .createNativeQuery("select * from user where uuid = ?", User.class)
-                .setParameter(1, uuid);
-        return query.getSingleResult();
+        return getEntityManager().find(User.class, uuid);
     }
 
-//    @Override
-//    public User getByUUID(String uuid) {
-//        TypedQuery<User> query = (TypedQuery<User>) getEntityManager()
-//                .createNativeQuery("select * from user where email = ?", User.class)
-//                .setParameter(1, uuid);
-//        return query.getSingleResult();
-//    }
+    @Override
+    public User update(User user) {
+        getEntityManager().merge(user);
+        return user;
+    }
+
+    @Override
+    public User setEmailValidated(User user) {
+        getEntityManager().setProperty(UserProperties.EMAIL_VALIDE, true);
+        return user;
+    }
 
     @Override
     public boolean existsByEmail(String mail) {
-        return !getEntityManager().createNamedQuery("User.findByMail", User.class).setParameter(UserProperties.EMAIL, mail).getResultList().isEmpty();
+        return !getEntityManager().createNamedQuery(UserProperties.NQ_FIND_BY_MAIL, User.class).setParameter(UserProperties.EMAIL, mail).getResultList().isEmpty();
     }
     @Override
     public boolean existsByUUID(String uuid) {
-        return !getEntityManager().createNamedQuery("User.findByUUID", User.class).setParameter(UserProperties.UUID, uuid).getResultList().isEmpty();
+        return !getEntityManager().createNamedQuery(UserProperties.NQ_FIND_BY_UUID, User.class).setParameter(UserProperties.UUID, uuid).getResultList().isEmpty();
     }
 
     @Override

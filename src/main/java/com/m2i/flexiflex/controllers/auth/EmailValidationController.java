@@ -28,8 +28,11 @@ public class EmailValidationController {
             User user = userServiceImp.getByUUID(uuid);
             if (user.getValidationToken().equals(validationToken)) {
                 user.setEmailValidation(true);
-                userServiceImp.update(user);
-                return new ResponseEntity<>(user, HttpStatus.OK);
+                user = userServiceImp.setEmailValidated(user);
+                return new ResponseEntity<>(
+                        user,
+                        HttpStatus.OK
+                );
             }
         }
         return new ResponseEntity<>("Parametres incorrects.", HttpStatus.UNAUTHORIZED);
