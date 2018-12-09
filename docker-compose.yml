@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
   database:
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
@@ -16,7 +15,7 @@ services:
 
   spring-server:
     ports:
-      - 9002:8080
+      - 9090:8080
     build:
       context: .
       dockerfile: Dockerfile
