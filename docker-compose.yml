@@ -16,10 +16,8 @@ services:
 
   spring-server:
     ports:
-      - 9002:8080
-    build:
-      context: .
-      dockerfile: Dockerfile
+      - 9001:8080
+    image: flexiflex-server:latest
     depends_on:
       - database
     networks:
