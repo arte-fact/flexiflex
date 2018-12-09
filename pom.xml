@@ -20,7 +20,7 @@
     <properties>
         <MAJOR_NUMBER>0</MAJOR_NUMBER>
         <MINOR_NUMBER>0</MINOR_NUMBER>
-        <BUILD_NUMBER>99999</BUILD_NUMBER>
+        <BUILD_NUMBER>1</BUILD_NUMBER>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
@@ -228,52 +228,68 @@
             </plugin>
 
             <!-- Used for unit tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <!-- Sets the VM argument line used when unit tests are run. -->
-                    <argLine>-Xms256m -Xmx1G -XX:PermSize=256m -XX:MaxPermSize=512m ${surefireArgLine}</argLine>
-                    <!-- Skip unit tests if asked -->
-                    <skipTests>${skip.unit.tests}</skipTests>
-                    <!-- Excludes integration tests when unit tests are run. -->
-                    <!--<excludes>-->
-                    <!--<exclude>**/*ITTest.java</exclude>-->
-                    <!--</excludes>-->
-                    <!-- Save reports in particular directory -->
-                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>${maven-surefire-plugin.version}</version>-->
+                <!--<configuration>-->
+                    <!--&lt;!&ndash; Sets the VM argument line used when unit tests are run. &ndash;&gt;-->
+                    <!--<argLine>-Xms256m -Xmx1G -XX:PermSize=256m -XX:MaxPermSize=512m ${surefireArgLine}</argLine>-->
+                    <!--&lt;!&ndash; Skip unit tests if asked &ndash;&gt;-->
+                    <!--<skipTests>${skip.unit.tests}</skipTests>-->
+                    <!--&lt;!&ndash; Excludes integration tests when unit tests are run. &ndash;&gt;-->
+                    <!--&lt;!&ndash;<excludes>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<exclude>**/*ITTest.java</exclude>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</excludes>&ndash;&gt;-->
+                    <!--&lt;!&ndash; Save reports in particular directory &ndash;&gt;-->
+                    <!--<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
             <!-- Used for integration tests -->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-failsafe-plugin</artifactId>-->
+                <!--<version>${maven-failsafe-plugin.version}</version>-->
+                <!--<configuration>-->
+                    <!--&lt;!&ndash; Sets the VM argument line used when integration tests are run. &ndash;&gt;-->
+                    <!--<argLine>-Xms256m -Xmx1G -XX:PermSize=256m -XX:MaxPermSize=512m ${failsafeArgLine}</argLine>-->
+                    <!--&lt;!&ndash; Skip integration tests if asked &ndash;&gt;-->
+                    <!--<skipTests>${skip.integration.tests}</skipTests>-->
+                    <!--<excludes>-->
+                        <!--<exclude>**/*UnitTest.java</exclude>-->
+                    <!--</excludes>-->
+                    <!--&lt;!&ndash; Save reports in particular directory &ndash;&gt;-->
+                    <!--<reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>-->
+                <!--</configuration>-->
+                <!--&lt;!&ndash; Only run failsafe when required &ndash;&gt;-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>integration-tests</id>-->
+                        <!--<goals>-->
+                            <!--<goal>integration-test</goal>-->
+                            <!--<goal>verify</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.10</version>
                 <configuration>
-                    <!-- Sets the VM argument line used when integration tests are run. -->
-                    <argLine>-Xms256m -Xmx1G -XX:PermSize=256m -XX:MaxPermSize=512m ${failsafeArgLine}</argLine>
-                    <!-- Skip integration tests if asked -->
-                    <skipTests>${skip.integration.tests}</skipTests>
-                    <excludes>
-                        <exclude>**/*UnitTest.java</exclude>
-                    </excludes>
-                    <!-- Save reports in particular directory -->
-                    <reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>
+                    <imageName>flexiflex-server</imageName>
+                    <baseImage>tomcat:9.0-jre8-slim</baseImage>
+                    <entryPoint>["catalina.sh", "run"]</entryPoint>
+                    <resources>
+                        <resource>
+                            <targetPath>/usr/local/tomcat/webapps/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.war</include>
+                        </resource>
+                    </resources>
                 </configuration>
-                <!-- Only run failsafe when required -->
-                <executions>
-                    <execution>
-                        <id>integration-tests</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
-
 
 
         </plugins>

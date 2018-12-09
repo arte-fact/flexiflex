@@ -5,19 +5,25 @@ services:
   database:
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-      MYSQL_DATABASE: "formation"
+      MYSQL_DATABASE: "flexiflex"
       MYSQL_USER: "admin"
       MYSQL_PASSWORD: "admin"
     image: mysql:5.7.21
     ports:
       - 3306:3306
-#
-#  spring-server:
-#    ports:
-#      - 80:8080
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    depends_on:
-#      - "database"
-#    restart: always
+    networks:
+      - spring-data
+
+  spring-server:
+    ports:
+      - 9002:8080
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    networks:
+      - spring-data
+
+networks:
+  spring-data:
