@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class LoginController {
 
@@ -27,7 +27,7 @@ public class LoginController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @RequestMapping(value = "/auth/login", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<Object> login(@RequestParam(name = "email") String email, @RequestParam("password") String password) {
+    public ResponseEntity<Object> login(@RequestBody String email, @RequestBody String password) {
 
         if (userServiceImp.existsByMail(email)) {
             User user = userServiceImp.getByMail(email);

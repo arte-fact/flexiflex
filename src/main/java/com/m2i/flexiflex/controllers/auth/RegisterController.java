@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @Api(value = "Controller l'inscription", description = "Opérations d'inscritpion utilisateur")
 public class RegisterController {
@@ -28,17 +28,16 @@ public class RegisterController {
             @ApiResponse(code = 404, message = "Erreur")
     })
     @RequestMapping(value = "/auth/register", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity register(@RequestParam(name = "email") String email, @RequestParam(name = "password") String password) {
+    public ResponseEntity register(@RequestBody String email, @RequestBody String password) {
         if (!userServiceImp.existsByMail(email)) {
             try {
                 User user = userServiceImp.create(
                         email,
                         BcryptHolder.getInstance().getbCryptPasswordEncoder().encode(password)
-
                 );
 
                 SendMail sendMail = SendMail.getInstance();
-                String url="<div dir=\"ltr\"><a href=\"http://localhost:9090/auth/email_validation?key1="+ user.getUuid() + "&key2=" + user.getValidationToken() + "\">Confirmer votre inscription</a><br></div>";
+                String url="<div dir=\"ltr\"><a href=\"http://localhost:8080/auth/email_validation?key1="+ user.getUuid() + "&key2=" + user.getValidationToken() + "\">Confirmer votre inscription</a><br></div>";
                 String body="Pour confirmer votre inscription, cliquez sur ce lien :" + url;
                 sendMail.sendMail("flexiflex.emailvalidation@gmail.com", email, "Flexiflex - Validation de votre inscription",body);
 
