@@ -37,16 +37,16 @@ public class UserServiceImp implements UserService {
     }
 
     @Transactional
-    public void deleteUserByMail(String email){}
-
-    @Transactional
     public User create(String mail, String password){return userRepository.create(mail, password);}
 
     @Transactional
     public User update(User user){return userRepository.update(user);}
 
     @Transactional
-    public User setEmailValidated(User user){return userRepository.update(user);}
+    public User setEmailValidated(User user){return userRepository.setEmailValidated(user);}
+
+    @Transactional
+    public User updateValidationToken(User user){return userRepository.updateValidationToken(user);}
 
     @Transactional
     public boolean existsByMail(String email){return userRepository.existsByEmail(email);}

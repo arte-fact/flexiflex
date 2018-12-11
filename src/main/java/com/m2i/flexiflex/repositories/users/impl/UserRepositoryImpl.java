@@ -48,14 +48,17 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User, Long> implement
 
     @Override
     public User update(User user) {
-        getEntityManager().merge(user);
-        return user;
+        return getEntityManager().merge(user);
     }
 
-    @Override
     public User setEmailValidated(User user) {
         getEntityManager().setProperty(UserProperties.EMAIL_VALIDE, true);
-        return user;
+        return getByUUID(user.getUuid());
+    }
+
+    public User updateValidationToken(User user) {
+        getEntityManager().setProperty(UserProperties.VALIDATION_TOKEN, UUID.randomUUID().toString());
+        return getByUUID(user.getUuid());
     }
 
     @Override
@@ -79,7 +82,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User, Long> implement
             user.setInscriptionDate(Date.valueOf(LocalDate.now()));
             getEntityManager().persist(user);
         }
-        User dbUser = getEntityManager().createNamedQuery("User.findByMail", User.class)
+        User dbUser = getEntityManager().createNamedQuery(UserProperties.NQ_FIND_BY_MAIL, User.class)
                 .setParameter(UserProperties.EMAIL, mail)
                 .setMaxResults(1)
                 .getSingleResult();
