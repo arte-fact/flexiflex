@@ -18,6 +18,8 @@ public interface UserRepository extends BaseRepository<User, Long> {
     User create(String email, String password);
     User update(User user);
 
+    User updateValidationToken(User user);
+
     User setEmailValidated(User user);
 
     boolean existsByEmail(String email);

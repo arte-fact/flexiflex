@@ -10,19 +10,3 @@ services:
     image: mysql:5.7.21
     ports:
       - 3306:3306
-    networks:
-      - spring-data
-
-  spring-server:
-    ports:
-      - 9090:8080
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - database
-    networks:
-      - spring-data
-
-networks:
-  spring-data:

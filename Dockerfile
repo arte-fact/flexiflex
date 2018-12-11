@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-alpine
 
-VOLUME /tmp
+COPY target/flexiflex-0.0.1.jar app.jar
 
-COPY /target/flexiflex-0.0.1.jar app.jar
+EXPOSE 8080
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+CMD java -jar app.jar

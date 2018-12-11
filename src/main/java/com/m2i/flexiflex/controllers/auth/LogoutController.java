@@ -2,6 +2,7 @@ package com.m2i.flexiflex.controllers.auth;
 
 import com.m2i.flexiflex.http.requests.LoginRequest;
 import com.m2i.flexiflex.http.responses.LoginResponse;
+import com.m2i.flexiflex.http.responses.UserResponse;
 import com.m2i.flexiflex.repositories.model.user.User;
 import com.m2i.flexiflex.services.user.impl.UserServiceImp;
 import com.m2i.flexiflex.utils.BcryptHolder;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-public class LoginController {
+public class LogoutController {
 
     @Autowired
     private UserServiceImp userServiceImp;
@@ -28,22 +29,16 @@ public class LoginController {
             @ApiResponse(code = 200, message = "Successfully retrieved list"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    @RequestMapping(value = "/auth/login", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<Object> login(@RequestBody String jsonRequest) throws JSONException {
-        LoginRequest request = LoginRequest.buildFromJson(jsonRequest);
+    @RequestMapping(value = "/auth/logout", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<Object> logout(@RequestHeader String uuid, @RequestHeader String token) {
 
-        if (userServiceImp.existsByMail(request.email)) {
-
-            User user = userServiceImp.getByMail(request.email);
-
-            if (BcryptHolder.getInstance().getbCryptPasswordEncoder().matches(request.password, user.getPassword())
-                    && user.getEmailValidation()) {
-
-                User newUser = userServiceImp.updateValidationToken(user);
-                LoginResponse response = new LoginResponse(newUser.getUuid(), user.getValidationToken());
-                return new ResponseEntity<>(response, HttpStatus.OK);
+        if (userServiceImp.existsByUUID(uuid)) {
+            User user = userServiceImp.getByUUID(uuid);
+            if(user.getValidationToken().equals(token) && user.getEmailValidation()) {
+                user.setValidationToken("undefined");
+                userServiceImp.update(user);
             }
         }
-        return new ResponseEntity<>("Email ou password incorrect.",HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("Email ou password incorrect.", HttpStatus.UNAUTHORIZED);
     }
 }
