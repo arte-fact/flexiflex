@@ -29,9 +29,12 @@ public class EmailValidationController {
             if (user.getValidationToken().equals(validationToken)) {
                 user.setEmailValidation(true);
                 userServiceImp.update(user);
-                return new ResponseEntity<>("Account validated, enjoy!", HttpStatus.OK);
+                return new ResponseEntity<>(
+                        "<h1> Votre compte à été validé, félicitations!<h1><a href=\"http://flexiflex.tk\">flexiflex.tk</a>",
+                        HttpStatus.OK
+                );
             }
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("Oups! Erreur...", HttpStatus.UNAUTHORIZED);
     }
 }

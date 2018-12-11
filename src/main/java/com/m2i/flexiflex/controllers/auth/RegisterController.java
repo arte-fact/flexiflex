@@ -40,7 +40,7 @@ public class RegisterController {
                         BcryptHolder.getInstance().getbCryptPasswordEncoder().encode(request.password)
                 );
 
-                String url="<div dir=\"ltr\"><a href=\"http://localhost:8080/auth/email_validation?key1="+ user.getUuid() + "&key2=" + user.getValidationToken() + "\">Confirmer votre inscription</a><br></div>";
+                String url="<div dir=\"ltr\"><a href=\"http://62.210.148.177:9090/auth/email_validation?key1="+ user.getUuid() + "&key2=" + user.getValidationToken() + "\">Confirmer votre inscription</a><br></div>";
                 String body="Pour confirmer votre inscription, cliquez sur ce lien :" + url;
                 SendMail.sendMail("flexiflex.emailvalidation@gmail.com", request.email, "Flexiflex - Validation de votre inscription",body);
 
