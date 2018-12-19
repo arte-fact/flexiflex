@@ -9,12 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
+@Service("userServiceImp")
 public class UserServiceImp implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-
 
     @Transactional
     public void save(User user) {

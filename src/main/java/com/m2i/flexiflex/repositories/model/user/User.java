@@ -76,4 +76,16 @@ public class User implements Serializable {
     public void setEmailValidation(boolean isValidated) {
         this.emailValidation = isValidated;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", inscriptionDate=" + inscriptionDate +
+                ", validationToken='" + validationToken + '\'' +
+                ", emailValidation=" + emailValidation +
+                ", uuid='" + uuid + '\'' +
+                '}';
+    }
 }
