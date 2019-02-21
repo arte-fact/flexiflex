@@ -23,6 +23,10 @@ services:
       - database
     networks:
       - spring-data
+    labels:
+      traefik.backend: "flexiflex-backend"
+      traefik.frontend.rule: "Host:api.flexiflex.tk"
+      traefik.enable: "true"
 
 networks:
   spring-data:
